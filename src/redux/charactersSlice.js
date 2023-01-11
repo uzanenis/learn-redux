@@ -1,16 +1,17 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import axios from "axios";
 
-const BASE_URL = "https://www.breakingbadapi.com/api/"
-export const fetchCharacters = createAsyncThunk('characters/getCharacters', async () => {
-    const res = await axios(`${BASE_URL}characters/?limit=10`)
-    return res.data
+const BASE_URL = "https://rickandmortyapi.com/api"
+export const fetchCharacters = createAsyncThunk('characters/getCharacters', async (page) => {
+    const res = await axios.get(`${BASE_URL}/character/?page=${page}`)
+    return res.data.results
 })
 export const charactersSlice = createSlice({
     name: 'characters',
     initialState: {
         items: [],
         isLoading: false,
+        page: 1,
     },
     reducers: {},
     extraReducers: {
@@ -18,8 +19,9 @@ export const charactersSlice = createSlice({
             state.isLoading = true
         },
         [fetchCharacters.fulfilled]: (state, action) => {
-            state.items = action.payload
+            state.items = [...state.items,...action.payload]
             state.isLoading = false
+            state.page += 1;
         },
         [fetchCharacters.rejected]: (state, action) => {
             state.isLoading = false

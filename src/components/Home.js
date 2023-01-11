@@ -5,6 +5,7 @@ import Masonry from '@mui/lab/Masonry';
 
 const Home = () => {
     const characters = useSelector(state => state.characters.items)
+    const nextPage = useSelector(state => state.characters.page)
     const isLoading = useSelector(state => state.characters.isLoading)
     const error = useSelector(state => state.characters.error)
     const dispatch = useDispatch()
@@ -12,26 +13,29 @@ const Home = () => {
         dispatch(fetchCharacters())
     }, [dispatch])
 
-    console.log(characters)
 
-    if(isLoading){
-        return <div>Loading...</div>
-
-    }
-
-    if(error){
+    if (error) {
         return <div>{error}</div>
     }
     return (
-        <Masonry columns={3} spacing={2}>
-            {characters.map((character) => (
-                <div key={character.char_id} >
-                    <img src={character.img} alt={character.name} style={{width:300, height:'auto' }}></img>
-                    <h3>{character.name}</h3>
-                </div>
+        <div style={{padding:32}}>
+            <Masonry columns={3} spacing={2}>
+                {characters.map((character) => (
+                    <div key={character.id}>
+                        <img src={character.image} alt={character.name} style={{width: 300, height: 'auto'}}></img>
+                        <h3>{character.name}</h3>
+                    </div>
+                ))}
+            </Masonry>
+            <div>
+                <button onClick={() =>
+                    dispatch(fetchCharacters(nextPage))
+                }>
+                    {isLoading ? <span>Loading...</span> : <span>{nextPage}</span>}Next Page -> ({nextPage})</button>
+            </div>
 
-            ))}
-        </Masonry>
+        </div>
+
     )
 }
 
